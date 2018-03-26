@@ -1,0 +1,24 @@
+{
+  "name": "archive-slack-files",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AccaliaDeElementia/Archive-Slack-Files.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AccaliaDeElementia/Archive-Slack-Files/issues"
+  },
+  "homepage": "https://github.com/AccaliaDeElementia/Archive-Slack-Files#readme",
+  "dependencies": {
+    "fs-extra": "^5.0.0",
+    "request": "^2.85.0",
+    "yargs": "^11.0.0"
+  }
+}
