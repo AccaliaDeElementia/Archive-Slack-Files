@@ -85,7 +85,9 @@ const deleteFile = file => {
                 .pipe(fs.createWriteStream(dest))
                 .on('error', (err) => rej(err))
                 .on('close', res());
-        })).then(() => makePromiseRequest({
+        }))
+        .then(()=>console.log('Download complete!'))
+        .then(() => makePromiseRequest({
             url: 'https://slack.com/api/files.delete',
             formData: {
                 token: args.token,
