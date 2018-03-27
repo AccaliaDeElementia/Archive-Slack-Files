@@ -47,6 +47,7 @@ const getUsers = () => makePromiseRequest({
     });
 
 const getFiles = (users, channels) => {
+    let maxPages = 1;
     const getem = (page) => makePromiseRequest({
         method: 'POST',
         url: 'https://slack.com/api/files.list',
@@ -57,7 +58,12 @@ const getFiles = (users, channels) => {
             count: 50,
             page
         }
-    }).then(data => data.files
+    })
+    .then(data => {
+        maxPages = data.paging.pages;
+        return data;
+    })
+    .then(data => data.files
         .filter(file => file.channels[0])
         .map(record => {
             return {
@@ -69,9 +75,10 @@ const getFiles = (users, channels) => {
         })
         .filter(file => file.permalink));
     const getUntil = (i, results, count) => {
+	console.log(`Fetching page ${i} with ${results.length} candidates so far`);
         return getem(i).then(files => {
             results = results.concat(files);
-            if (results.length >= count) {
+            if (results.length >= count || i >= maxPages) {
                 return Promise.resolve(results);
             }
             return getUntil(i + 1, results, count);
