@@ -94,7 +94,17 @@ const deleteFile = file => {
         }));
 };
 
-const deleteFiles = files => Promise.all(files.map(file => deleteFile(file)));
+const deleteFiles = files => {
+    const _files = files.slice();
+    const next = () => {
+        const file = _files.pop();
+        if (!file){
+            return Promise.resolve();
+        }
+        return deleteFile(file).then(next);
+    };
+    return next();
+};
 
 const args = yargs
     .describe('token', 'Slack API token for authentication')
