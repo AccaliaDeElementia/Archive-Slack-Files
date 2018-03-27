@@ -88,6 +88,7 @@ const deleteFile = file => {
         }))
         .then(()=>console.log('Download complete!'))
         .then(() => makePromiseRequest({
+            method: 'POST',
             url: 'https://slack.com/api/files.delete',
             formData: {
                 token: args.token,
