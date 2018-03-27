@@ -49,33 +49,33 @@ const getUsers = () => makePromiseRequest({
 const getFiles = (users, channels) => {
     let maxPages = 1;
     const getem = (page) => makePromiseRequest({
-        method: 'POST',
-        url: 'https://slack.com/api/files.list',
-        formData: {
-            token: args.token,
-            ts_from: 0,
-            ts_to: Math.floor(Date.now() / 1000) - args.cutoffDays * 24 * 60 * 60,
-            count: 50,
-            page
-        }
-    })
-    .then(data => {
-        maxPages = data.paging.pages;
-        return data;
-    })
-    .then(data => data.files
-        .filter(file => file.channels[0])
-        .map(record => {
-            return {
-                filename: `${new Date(record.timestamp * 1000).toISOString().slice(0,-5)} - ${users[record.user]} - ${record.name}`.replace(/[\/\\:]/g, '_'),
-                folder: channels[record.channels[0]],
-                permalink: record.url_private_download,
-                id: record.id,
-            };
+            method: 'POST',
+            url: 'https://slack.com/api/files.list',
+            formData: {
+                token: args.token,
+                ts_from: 0,
+                ts_to: Math.floor(Date.now() / 1000) - args.cutoffDays * 24 * 60 * 60,
+                count: 50,
+                page
+            }
         })
-        .filter(file => file.permalink));
+        .then(data => {
+            maxPages = data.paging.pages;
+            return data;
+        })
+        .then(data => data.files
+            .filter(file => file.channels[0] && !file.is_external)
+            .map(record => {
+                return {
+                    filename: `${new Date(record.timestamp * 1000).toISOString().slice(0,-5)} - ${users[record.user]} - ${record.name}`.replace(/[\/\\:]/g, '_'),
+                    folder: channels[record.channels[0]],
+                    permalink: record.url_private_download,
+                    id: record.id,
+                };
+            })
+            .filter(file => file.permalink));
     const getUntil = (i, results, count) => {
-	console.log(`Fetching page ${i} with ${results.length} candidates so far`);
+        console.log(`Fetching page ${i} with ${results.length} candidates so far`);
         return getem(i).then(files => {
             results = results.concat(files);
             if (results.length >= count || i >= maxPages) {
