@@ -60,7 +60,7 @@ const getFiles = (users, channels) => makePromiseRequest({
     .filter(file => file.channels[0])
     .map(record => {
         return {
-            filename: `${new Date(record.timestamp * 1000).toISOString().slice(0,-5)} - ${users[record.user]} - ${record.name}`,
+            filename: `${new Date(record.timestamp * 1000).toISOString().slice(0,-5)} - ${users[record.user]} - ${record.name}`.replace(/[\/\\:]/g, '_'),
             folder: channels[record.channels[0]],
             permalink: record.url_private_download,
             id: record.id,
