@@ -103,7 +103,7 @@ const deleteFiles = files => {
         }
         return deleteFile(file).then(next);
     };
-    return next();
+    return next().catch(e=>console.error(`Whoopsie! ${e.message}`));
 };
 
 const args = yargs
