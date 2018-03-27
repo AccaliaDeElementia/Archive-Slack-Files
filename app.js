@@ -65,7 +65,8 @@ const getFiles = (users, channels) => makePromiseRequest({
             permalink: record.url_private_download,
             id: record.id,
         };
-    }));
+    })
+    .filter(file => file.permalink));
 
 const deleteFile = file => {
     const folder = path.join(args.destination, file.folder);
