@@ -88,14 +88,17 @@ const getFiles = (users, channels) => {
 };
 
 const deleteFile = file => {
-    const folder = path.join(args.destination, file.folder);
+    const folder = path.join(args.destination, file.folder || '');
     const dest = path.join(folder, file.filename);
-    console.log(`Downloading \`${file.filename}\` from \`${file.folder}\``);
+    console.log(`Downloading \`${file.filename}\` from \`${file.folder||folder}\``);
     if (!args.runDelete) {
         return Promise.resolve();
     }
     return fs.ensureDir(folder)
         .then(() => new Promise((res, rej) => {
+            if (args.noDownload){
+                return res();
+            }
             request({
                     url: file.permalink,
                     headers: {
@@ -134,6 +137,7 @@ const args = yargs
     .default('token', process.env.SLACK_TOKEN)
     .describe('dry-run', 'Perform a dry run')
     .describe('run-delete', 'Download and delete files from Slack')
+    .describe('no-download', 'If set skip the download of files before deletion')
     .conflicts('dry-run', 'run-delete')
     .alias('destination', 'dest')
     .describe('destination', 'Download File Destination')
