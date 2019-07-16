@@ -64,7 +64,7 @@ const getFiles = (users, channels) => {
             return data;
         })
         .then(data => data.files
-            .filter(file => file.channels[0] && !file.is_external)
+            //.filter(file => file.channels[0] && !file.is_external)
             .map(record => {
                 return {
                     filename: `${new Date(record.timestamp * 1000).toISOString().slice(0,-5)} - ${users[record.user]} - ${record.name}`.replace(/[\/\\:]/g, '_'),
@@ -84,7 +84,7 @@ const getFiles = (users, channels) => {
             return getUntil(i + 1, results, count);
         });
     };
-    return getUntil(1, [], 50);
+    return getUntil(1, [], args.limit);
 };
 
 const deleteFile = file => {
@@ -117,7 +117,15 @@ const deleteFile = file => {
                 token: args.token,
                 file: file.id
             }
-        }));
+        }))
+        .then(data=>{
+            console.log(data);
+            if (data.ok){
+                return new Promise(res=>setTimeout(res, 500));
+            } else {
+                return new Promise(res=>setTimeout(res, 5000));
+            }
+        });
 };
 
 const deleteFiles = files => {
@@ -146,6 +154,9 @@ const args = yargs
     .describe('cutoff-days', 'Number of days to preserve files for')
     .default('cutoff-days', 120)
     .number('cutoff-days')
+    .describe('limit', 'limit processing to certain number of files')
+    .default('limit', 50)
+    .number('limit')
     .argv;
 
 Promise.all([getUsers(), getChannels()])
